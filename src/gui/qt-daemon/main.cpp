@@ -29,8 +29,7 @@ int main(int argc, char *argv[])
 //       _set_FMA3_enable(0);
 //#endif  // ARCH_CPU_X86_64 && _MSC_VER <= 1800
   
-  if(argc > 1)
-    std::cout << argv[1] << std::endl;
+
 
 #ifdef _MSC_VER 
   #ifdef _WIN64
@@ -66,6 +65,15 @@ int main(int argc, char *argv[])
 
 
   QApplication app(argc, argv);
+
+
+  if (argc > 1)
+  {
+    //std::cout << argv[1] << std::endl;
+    QMessageBox msg;
+    msg.setText(argv[1]);
+    msg.exec();
+  }
     
 #ifdef Q_OS_DARWIN
   URLEventFilter url_event_filter;
