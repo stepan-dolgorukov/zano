@@ -36,7 +36,8 @@ using namespace epee;
 #include "wallet/wallet_debug_events_definitions.h"
 
 
-#define DBG_VAL_PRINT(x) ((void)0) // LOG_PRINT_CYAN(std::setw(42) << std::left << #x ":" << x, LOG_LEVEL_0)
+//#define DBG_VAL_PRINT(x) ((void)0)
+#define DBG_VAL_PRINT(x) LOG_PRINT_CYAN(std::setw(42) << std::left << #x ":" << x, LOG_LEVEL_0)
 
 namespace currency
 {
@@ -312,6 +313,7 @@ namespace currency
       crypto::point_t commitment_to_zero = (crypto::scalar_t(bare_inputs_sum) - crypto::scalar_t(fee)) * currency::native_coin_asset_id_pt + ogc.pseudo_out_amount_commitments_sum + (ogc.ao_commitment_in_outputs ? -ogc.ao_amount_commitment : ogc.ao_amount_commitment) - ogc.amount_commitments_sum;
       crypto::scalar_t secret_x = ogc.real_in_asset_id_blinding_mask_x_amount_sum - ogc.asset_id_blinding_mask_x_amount_sum;
 
+      DBG_VAL_PRINT("==generate_tx_balance_proof (X)==");
       DBG_VAL_PRINT(bare_inputs_sum);
       DBG_VAL_PRINT(fee);
       DBG_VAL_PRINT(ogc.pseudo_out_amount_commitments_sum);
@@ -323,10 +325,10 @@ namespace currency
       DBG_VAL_PRINT(commitment_to_zero);
       DBG_VAL_PRINT(secret_x);
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
       bool commitment_to_zero_is_sane = commitment_to_zero == secret_x * crypto::c_point_X;
       CHECK_AND_ASSERT_MES(commitment_to_zero_is_sane, false, "internal error: commitment_to_zero is malformed (X)");
-#endif
+//#endif
       r = crypto::generate_schnorr_sig<crypto::gt_X>(tx_id, commitment_to_zero, secret_x, proof.ss);
       CHECK_AND_ASSERT_MES(r, false, "generate_schnorr_sig (X) failed");
     }

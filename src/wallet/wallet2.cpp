@@ -6814,6 +6814,12 @@ void wallet2::finalize_transaction(const currency::finalize_tx_param& ftp, curre
   // broadcasting tx without secret key storing is forbidden to avoid lost key issues
   WLT_THROW_IF_FALSE_WALLET_INT_ERR_EX(!broadcast_tx || store_tx_secret_key, "finalize_tx is requested to broadcast a tx without storing the key");
 
+  std::string filename = std::string("ftp_") + epee::string_tools::int_to_hex(crypto::rand<uint64_t>()).substr(2);
+  std::string ftp_serialized;
+  WLT_THROW_IF_FALSE_WALLET_INT_ERR_EX(t_serializable_object_to_blob(ftp, ftp_serialized), "t_serializable_object_to_blob(ftp) failed");
+  epee::file_io_utils::save_string_to_file_throw(filename, ftp_serialized);
+  LOG_PRINT_L0("finalize tx params were serialized to: " << filename);
+
   //TIME_MEASURE_START_MS(construct_tx_time);
   bool r = currency::construct_tx(m_account.get_keys(),
     ftp, result);
